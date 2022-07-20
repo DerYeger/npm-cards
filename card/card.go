@@ -2,6 +2,7 @@ package card
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/DerYeger/npm-cards/lib"
 	svg "github.com/ajstarks/svgo"
@@ -24,13 +25,6 @@ func makeBackground(card lib.Card) {
   card.SVG.Roundrect(card.Padding, card.Padding, card.CardSize, card.CardSize, card.BorderRadius, card.BorderRadius, "fill:url(#background);stroke:none;")
 }
 
-func calculateDownloadPoint(card lib.Card, downloads int, downloadsMax int) int {
-  availableHeight := (card.Size - 2 * card.Padding) / 2 - card.BorderRadius
-  point := int(float64(downloads) / float64(downloadsMax) * float64(availableHeight))
-  point = (card.Size - 2 * card.Padding) - point - card.BorderRadius
-  return point
-}
-
 func makeGraph(card lib.Card) {
   downloadsMax := 1
   for i := 0; i < len(card.PackageData.WeeklyDownloads); i++ {
@@ -40,17 +34,31 @@ func makeGraph(card lib.Card) {
     }
   }
 
+  strokeWidth := float64(card.Size) / 120
+
   segmentWidth := (card.Size - 2 * card.Padding) / (len(card.PackageData.WeeklyDownloads) - 1)
 
-  path := "M" + fmt.Sprint(card.Padding) + "," + fmt.Sprint(calculateDownloadPoint(card, card.PackageData.WeeklyDownloads[0].Downloads, downloadsMax))
-  for i := 1; i < len(card.PackageData.WeeklyDownloads); i++ {
+  path := ""
+  for i := 0; i < len(card.PackageData.WeeklyDownloads); i++ {
     xCord := card.Padding + i * segmentWidth
-    if i == len(card.PackageData.WeeklyDownloads) - 1 {
+    availableHeight := (card.Size - 2 * card.Padding) / 2 - card.BorderRadius
+    yCord := float64(card.PackageData.WeeklyDownloads[i].Downloads) / float64(downloadsMax) * float64(availableHeight)
+    yCord = float64(card.Size - 2.0 * card.Padding) - yCord - float64(card.BorderRadius) - strokeWidth / 2
+    if i == 0 {
+      // Add extra point at left edge for smooth cutoff
+      path = "M" + fmt.Sprint(card.Padding) + "," + fmt.Sprint(yCord)
+      xCord = card.Padding + int(strokeWidth)
+    } else if i == len(card.PackageData.WeeklyDownloads) - 1 {
+      // Add extra point at right edge for smooth cutoff
+      path = path + "L" + fmt.Sprint(card.Size - card.Padding - int(strokeWidth))  + "," + fmt.Sprint(yCord)
       xCord = card.Size - card.Padding
     }
-    path = path + "L" + fmt.Sprint(xCord)  + "," + fmt.Sprint(calculateDownloadPoint(card, card.PackageData.WeeklyDownloads[i].Downloads, downloadsMax))
+    path = path + "L" + fmt.Sprint(xCord)  + "," + fmt.Sprint(yCord)
   }
-  card.SVG.Path(path, "fill:none;stroke:url(#graph);stroke-width:5px;stroke-linejoin:round;")
+
+
+
+  card.SVG.Path(path, fmt.Sprintf("fill:none;stroke:url(#graph);stroke-width:%fpx;stroke-linejoin:round;", strokeWidth))
 }
 
 func makeDefs(card lib.Card) {
@@ -105,10 +113,25 @@ func makeDefs(card lib.Card) {
 func makeText(card lib.Card) {
   s := card.SVG
 
-  textPadding := 32
-  textStart := card.Padding + textPadding
+  textPadding := float64(card.CardSize) / 16 + math.Sqrt(float64(card.BorderRadius))
+  textStart := float64(card.Padding) + textPadding
+  availableSpace := float64(card.CardSize) - 2 * textPadding
+  fontSize := availableSpace / 10
 
-  s.Text(textStart, textStart + 32 / 2, card.PackageData.Name, "dominant-baseline:middle;fill:white;font-size:32px;font-family:sans-serif;")
+  title := card.PackageData.Name
+  titleColor := "#fff"
+  titleSize := availableSpace / (0.5 * float64(len(title)))
+  if titleSize > fontSize {
+    titleSize = fontSize
+  }
+  s.Text(int(textStart), int(textStart + titleSize / 2), title, fmt.Sprintf("dominant-baseline:middle;color:%s;fill:%s;font-size:%fpx;font-family:sans-serif;", titleColor, titleColor, titleSize))
 
-  s.Text(textStart, textStart + 32 / 2 + textPadding + 24 / 2, fmt.Sprint(card.PackageData.WeeklyDownloads[len(card.PackageData.WeeklyDownloads) - 1].Downloads) + " downloads last week", "dominant-baseline:middle;fill:darkgray;font-size:24px;font-family:sans-serif;")
+  recentDownloads :=  card.PackageData.WeeklyDownloads[len(card.PackageData.WeeklyDownloads) - 1].Downloads
+  subtitle := fmt.Sprintf("%d downloads last week", recentDownloads)
+  subtitleColor := "#ccc"
+  subtitleSize := availableSpace / (0.5 * float64(len(subtitle)))
+  if subtitleSize > titleSize {
+    subtitleSize = titleSize
+  }
+  s.Text(int(textStart), int(textStart + titleSize / 2 + textPadding + subtitleSize / 2), subtitle, fmt.Sprintf("dominant-baseline:middle;color:%s;fill:%s;font-size:%fpx;font-family:sans-serif;", subtitleColor, subtitleColor, subtitleSize))
 }
