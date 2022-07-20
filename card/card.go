@@ -11,12 +11,11 @@ func CreateCard(card lib.Card) {
   s := card.SVG
   s.Start(card.Size, card.Size)
 
+  makeDefs(card)
 
   makeBackground(card)
   makeGraph(card)
-  makeDefs(card)
-
-  s.Text(48, 48 + 32 - 8, card.PackageData.Name, "fill:white;font-size:32px;font-family:sans-serif;")
+  makeText(card)
 
   s.End()
 }
@@ -87,4 +86,15 @@ func makeDefs(card lib.Card) {
   s.Def()
   s.LinearGradient("graph", 50, 0, 50, 200, graphGradient)
   s.DefEnd()
+}
+
+func makeText(card lib.Card) {
+  s := card.SVG
+
+  textPadding := 32
+  textStart := card.Padding + textPadding
+
+  s.Text(textStart, textStart + 32 / 2, card.PackageData.Name, "dominant-baseline:middle;fill:white;font-size:32px;font-family:sans-serif;")
+
+  s.Text(textStart, textStart + 32 / 2 + textPadding + 24 / 2, fmt.Sprint(card.PackageData.WeeklyDownloads[len(card.PackageData.WeeklyDownloads) - 1].Downloads) + " downloads last week", "dominant-baseline:middle;fill:darkgray;font-size:24px;font-family:sans-serif;")
 }
