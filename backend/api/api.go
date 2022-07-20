@@ -1,30 +1,25 @@
-package main
+package api
 
 import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 
 	svg "github.com/ajstarks/svgo"
 
-	"github.com/DerYeger/npm-cards/card"
-	"github.com/DerYeger/npm-cards/lib"
-	"github.com/DerYeger/npm-cards/npm"
+	"github.com/DerYeger/npm-cards/backend/card"
+	"github.com/DerYeger/npm-cards/backend/lib"
+	"github.com/DerYeger/npm-cards/backend/npm"
 )
 
-func main() {
-  port, err := strconv.Atoi(os.Getenv("PORT"))
+func StartServer(port int) {
+  http.Handle("/", http.HandlerFunc(handleRequest))
+  log.Printf("Listening on %d", port)
+  err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
   if err != nil {
-    log.Print("Invalid or missing port. Defaulting to 8080.")
-    port = 8080
+    log.Fatal("ListenAndServe:", err)
   }
-	http.Handle("/", http.HandlerFunc(handleRequest))
-	err = http.ListenAndServe(":" + fmt.Sprint(port), nil)
-	if err != nil {
-		log.Fatal("ListenAndServe:", err)
-	}
 }
 
 func handleRequest(w http.ResponseWriter, req *http.Request) {

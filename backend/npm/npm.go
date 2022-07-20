@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DerYeger/npm-cards/lib"
+	"github.com/DerYeger/npm-cards/backend/lib"
 	"golang.org/x/sync/errgroup"
 )
 

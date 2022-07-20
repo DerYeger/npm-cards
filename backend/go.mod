@@ -1,4 +1,4 @@
-module github.com/DerYeger/npm-cards
+module github.com/DerYeger/npm-cards/backend
 
 go 1.18
 

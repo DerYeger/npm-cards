@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/DerYeger/npm-cards/lib"
+	"github.com/DerYeger/npm-cards/backend/lib"
 	svg "github.com/ajstarks/svgo"
 )
 
