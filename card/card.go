@@ -4,19 +4,20 @@ import (
 	"fmt"
 
 	"github.com/DerYeger/npm-cards/lib"
+	svg "github.com/ajstarks/svgo"
 )
 
 func CreateCard(card lib.Card) {
   s := card.SVG
   s.Start(card.Size, card.Size)
 
-  makeBackground(card)
 
+  makeBackground(card)
   makeGraph(card)
+  makeDefs(card)
 
   s.Text(48, 48 + 32 - 8, card.PackageData.Name, "fill:white;font-size:32px;font-family:sans-serif;")
 
-  // s.Grid(0, 0, 500, 500, 16, "stroke:black;")
   s.End()
 }
 
@@ -50,5 +51,40 @@ func makeGraph(card lib.Card) {
     }
     path = path + "L" + fmt.Sprint(xCord)  + "," + fmt.Sprint(calculateDownloadPoint(card.Size, card.Padding, card.PackageData.WeeklyDownloads[i].Downloads, downloadsMax))
   }
-  card.SVG.Path(path, "fill:none;stroke:green;stroke-width:4px;")
+  card.SVG.Path(path, "fill:none;stroke:url(#graph);stroke-width:5px;stroke-linejoin:round;")
+}
+
+func makeDefs(card lib.Card) {
+  s := card.SVG
+  graphGradient := []svg.Offcolor {
+    {
+      Color: "green",
+      Opacity: 100,
+      Offset: 0,
+    },
+    {
+      Color: "greenyellow",
+      Opacity: 100,
+      Offset: 50,
+    },
+    {
+      Color: "yellow",
+      Opacity: 100,
+      Offset: 65,
+    },
+    {
+      Color: "orange",
+      Opacity: 100,
+      Offset: 80,
+    },
+    {
+      Color: "red",
+      Opacity: 100,
+      Offset: 100,
+    },
+   }
+
+  s.Def()
+  s.LinearGradient("graph", 50, 0, 50, 200, graphGradient)
+  s.DefEnd()
 }
