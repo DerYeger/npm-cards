@@ -29,6 +29,10 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
   if err != nil {
     weeks = 10
   }
+  if weeks < 2 {
+    w.WriteHeader(400)
+    return
+  }
 
   packageName := query.Get("package")
   if packageName == "" {
