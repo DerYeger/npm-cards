@@ -57,6 +57,11 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
     padding = 0
   }
 
+  borderRadius, err := strconv.Atoi(query.Get("borderRadius"))
+  if err != nil {
+    borderRadius = 0
+  }
+
   w.Header().Set("Content-Type", "image/svg+xml")
 
   cardData := lib.Card {
@@ -65,6 +70,7 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
     Size: size,
     Padding: padding,
     CardSize: size - 2 * padding,
+    BorderRadius: borderRadius,
   }
 
   card.CreateCard(cardData)

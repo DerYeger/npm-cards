@@ -21,13 +21,13 @@ func CreateCard(card lib.Card) {
 }
 
 func makeBackground(card lib.Card) {
-  card.SVG.Roundrect(card.Padding, card.Padding, card.CardSize, card.CardSize, 0, 0, "fill:rgba(0, 0, 0, 0.8);stroke:black;")
+  card.SVG.Roundrect(card.Padding, card.Padding, card.CardSize, card.CardSize, card.BorderRadius, card.BorderRadius, "fill:url(#background);stroke:none;")
 }
 
-func calculateDownloadPoint(size int, padding int, downloads int, downloadsMax int) int {
-  availableHeight := (size - 2 * padding) / 2
+func calculateDownloadPoint(card lib.Card, downloads int, downloadsMax int) int {
+  availableHeight := (card.Size - 2 * card.Padding) / 2 - card.BorderRadius
   point := int(float64(downloads) / float64(downloadsMax) * float64(availableHeight))
-  point = (size - 2 * padding) - point
+  point = (card.Size - 2 * card.Padding) - point - card.BorderRadius
   return point
 }
 
@@ -42,19 +42,32 @@ func makeGraph(card lib.Card) {
 
   segmentWidth := (card.Size - 2 * card.Padding) / (len(card.PackageData.WeeklyDownloads) - 1)
 
-  path := "M" + fmt.Sprint(card.Padding) + "," + fmt.Sprint(calculateDownloadPoint(card.Size, card.Padding, card.PackageData.WeeklyDownloads[0].Downloads, downloadsMax))
+  path := "M" + fmt.Sprint(card.Padding) + "," + fmt.Sprint(calculateDownloadPoint(card, card.PackageData.WeeklyDownloads[0].Downloads, downloadsMax))
   for i := 1; i < len(card.PackageData.WeeklyDownloads); i++ {
     xCord := card.Padding + i * segmentWidth
     if i == len(card.PackageData.WeeklyDownloads) - 1 {
       xCord = card.Size - card.Padding
     }
-    path = path + "L" + fmt.Sprint(xCord)  + "," + fmt.Sprint(calculateDownloadPoint(card.Size, card.Padding, card.PackageData.WeeklyDownloads[i].Downloads, downloadsMax))
+    path = path + "L" + fmt.Sprint(xCord)  + "," + fmt.Sprint(calculateDownloadPoint(card, card.PackageData.WeeklyDownloads[i].Downloads, downloadsMax))
   }
   card.SVG.Path(path, "fill:none;stroke:url(#graph);stroke-width:5px;stroke-linejoin:round;")
 }
 
 func makeDefs(card lib.Card) {
   s := card.SVG
+  backgroundGradient := []svg.Offcolor {
+    {
+      Color: "rgba(0, 0, 0, 0.8)",
+      Opacity: 100,
+      Offset: 0,
+    },
+    {
+      Color: "rgba(0, 0, 0, 0.9)",
+      Opacity: 100,
+      Offset: 100,
+    },
+  }
+
   graphGradient := []svg.Offcolor {
     {
       Color: "green",
@@ -81,9 +94,10 @@ func makeDefs(card lib.Card) {
       Opacity: 100,
       Offset: 100,
     },
-   }
+  }
 
   s.Def()
+  s.LinearGradient("background", 50, 0, 50, 200, backgroundGradient)
   s.LinearGradient("graph", 50, 0, 50, 200, graphGradient)
   s.DefEnd()
 }

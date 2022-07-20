@@ -19,4 +19,5 @@ type Card struct {
   Size int
   Padding int
   CardSize int
+  BorderRadius int
 }
