@@ -3,10 +3,10 @@ package api
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"strconv"
 
 	svg "github.com/ajstarks/svgo"
+	"github.com/gin-gonic/gin"
 
 	"github.com/DerYeger/npm-cards/backend/card"
 	"github.com/DerYeger/npm-cards/backend/lib"
@@ -14,35 +14,35 @@ import (
 )
 
 func StartServer(port int) {
-  http.Handle("/", http.HandlerFunc(handleRequest))
   log.Printf("Listening on %d", port)
-  err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
-  if err != nil {
-    log.Fatal("ListenAndServe:", err)
-  }
+  r := gin.Default()
+  r.Use(gin.Logger())
+  r.Use(gin.Recovery())
+	r.GET("/", handleRequest)
+	r.Run(fmt.Sprintf(":%d", port))
 }
 
-func handleRequest(w http.ResponseWriter, req *http.Request) {
-  query := req.URL.Query()
+func handleRequest(c *gin.Context) {
+  query := c.Request.URL.Query()
 
   weeks, err := strconv.Atoi(query.Get("weeks"))
   if err != nil {
     weeks = 10
   }
   if weeks < 2 {
-    w.WriteHeader(400)
+    c.Status(400)
     return
   }
 
   packageName := query.Get("package")
   if packageName == "" {
-    w.WriteHeader(400)
+    c.Status(400)
     return
   }
 
   packageData, err := npm.GetPackageData(packageName, weeks)
   if err != nil {
-    w.WriteHeader(400)
+    c.Status(400)
     return
   }
 
@@ -61,10 +61,10 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
     borderRadius = 0
   }
 
-  w.Header().Set("Content-Type", "image/svg+xml")
+  c.Header("Content-Type", "image/svg+xml")
 
   cardData := lib.Card {
-    SVG: svg.New(w),
+    SVG: svg.New(c.Writer),
     PackageData: packageData,
     Size: size,
     Padding: padding,
