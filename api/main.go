@@ -11,8 +11,7 @@ import (
 
 	"github.com/DerYeger/npm-cards/card"
 	"github.com/DerYeger/npm-cards/lib"
-
-	npm "github.com/DerYeger/npm-cards/npm"
+	"github.com/DerYeger/npm-cards/npm"
 )
 
 func main() {
@@ -31,13 +30,18 @@ func main() {
 func handleRequest(w http.ResponseWriter, req *http.Request) {
   query := req.URL.Query()
 
+  weeks, err := strconv.Atoi(query.Get("weeks"))
+  if err != nil {
+    weeks = 10
+  }
+
   packageName := query.Get("package")
   if packageName == "" {
     w.WriteHeader(400)
     return
   }
 
-  packageData, err := npm.GetPackageData(packageName, 20)
+  packageData, err := npm.GetPackageData(packageName, weeks)
   if err != nil {
     w.WriteHeader(400)
     return

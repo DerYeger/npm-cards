@@ -2,52 +2,59 @@ package npm
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io/ioutil"
-	"log"
 	"net/http"
+	"sort"
+	"sync"
 	"time"
-)
 
-import lib "github.com/DerYeger/npm-cards/lib"
+	"github.com/DerYeger/npm-cards/lib"
+	"golang.org/x/sync/errgroup"
+)
 
 func GetPackageData(packageName string, weeks int) (packageData lib.PackageData, err error) {
   packageData.Name = packageName
+  eg := errgroup.Group{}
+  mu := &sync.Mutex{}
+
   for i := weeks; i >= 0; i-- {
-    endDate := time.Now().AddDate(0, 0, -7 * i)
-    startDate := time.Now().AddDate(0, 0, -7 * (i + 1))
-    downloads, err := getDownloads(packageName, startDate, endDate)
-    if err != nil {
-      return packageData, err
-    }
-    packageData.WeeklyDownloads = append(packageData.WeeklyDownloads, downloads)
+    startDate := time.Now().AddDate(0, 0, -7 * (i + 1)).Format("2006-01-02")
+    endDate := time.Now().AddDate(0, 0, -7 * i).Format("2006-01-02")
+    eg.Go(func() error {
+      endpoint := "https://api.npmjs.org/downloads/point/" + startDate + ":" + endDate + "/" + packageName
+      resp, err := http.Get(endpoint)
+      if err != nil {
+        return err
+      }
+      if resp.StatusCode != 200 {
+        return errors.New("404")
+      }
+
+      body, err := ioutil.ReadAll(resp.Body)
+      if err != nil {
+          return err
+      }
+      var packageDownloads lib.PackageDownloads
+      err = json.Unmarshal(body, &packageDownloads)
+      if err != nil {
+        return err
+      }
+      mu.Lock()
+      packageData.WeeklyDownloads = append(packageData.WeeklyDownloads, packageDownloads)
+      mu.Unlock()
+      return nil
+    })
   }
-  log.Print(packageData.WeeklyDownloads)
-  return packageData, nil
-}
 
-func getDownloads(packageName string, startDate time.Time, endDate time.Time) (packageDownloads lib.PackageDownloads, err error) {
-
-  endpoint := "https://api.npmjs.org/downloads/point/" + startDate.Format("2006-01-02") + ":" + endDate.Format("2006-01-02") + "/" + packageName
-  log.Printf(endpoint)
-
-  resp, err := http.Get(endpoint)
+  err = eg.Wait()
   if err != nil {
-    return packageDownloads, err
-  }
-  if resp.StatusCode != 200 {
-    return packageDownloads, fmt.Errorf("not found")
+    return packageData, err
   }
 
-  body, err := ioutil.ReadAll(resp.Body)
-   if err != nil {
-      return packageDownloads, err
-   }
+  sort.Slice(packageData.WeeklyDownloads, func(i, j int) bool {
+    return packageData.WeeklyDownloads[i].Start < packageData.WeeklyDownloads[j].Start
+  })
 
-   err = json.Unmarshal(body, &packageDownloads)
-   if err != nil {
-    return packageDownloads, err
-   }
-
-   return packageDownloads, nil
+  return packageData, nil
 }
