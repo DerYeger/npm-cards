@@ -46,17 +46,15 @@ func makeGraph(card *lib.Card) {
     yCord = float64(card.BottomBound()) - yCord - float64(card.BorderRadius) - strokeWidth / 2
     if i == 0 {
       // Add extra point at left edge for smooth cutoff
-      path = "M" + fmt.Sprint(card.LeftBound()) + "," + fmt.Sprint(yCord)
+      path = fmt.Sprintf("M%d,%d", card.LeftBound(), int(yCord))
       xCord = card.LeftBound() + int(strokeWidth)
     } else if i == card.Weeks() - 1 {
       // Add extra point at right edge for smooth cutoff
-      path = path + "L" + fmt.Sprint(card.RightBound() - int(strokeWidth))  + "," + fmt.Sprint(yCord)
+      path = fmt.Sprintf("%sL%d,%d", path, card.RightBound() - int(strokeWidth), int(yCord))
       xCord = card.RightBound()
     }
-    path = path + "L" + fmt.Sprint(xCord)  + "," + fmt.Sprint(yCord)
+    path = fmt.Sprintf("%sL%d,%d", path, xCord, int(yCord))
   }
-
-
 
   card.SVG.Path(path, fmt.Sprintf("fill:none;stroke:url(#graph);stroke-width:%fpx;stroke-linejoin:round;", strokeWidth))
 }
