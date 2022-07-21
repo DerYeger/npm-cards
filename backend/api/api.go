@@ -89,6 +89,7 @@ func handleRequest(ctx *gin.Context) {
   }
 
   ctx.Header("Content-Type", "image/svg+xml")
+  ctx.Header("Cache-Control", "public, max-age=86400, immutable")
 
   cardData := lib.Card {
     SVG: svg.New(ctx.Writer),
