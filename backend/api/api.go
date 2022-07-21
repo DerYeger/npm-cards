@@ -18,12 +18,20 @@ import (
 )
 
 func StartServer(port int) {
-  log.Printf("Listening on %d", port)
   r := gin.Default()
+
   memoryStore := persist.NewMemoryStore(1 * time.Minute)
+
   r.Use(gin.Logger())
   r.Use(gin.Recovery())
+
 	r.GET("/api/packages/*name", cache.CacheByRequestURI(memoryStore, 1 * time.Minute), handleRequest)
+
+  r.GET("/api/health", func(ctx *gin.Context) {
+    ctx.Status(http.StatusOK)
+  })
+
+  log.Printf("Listening on %d", port)
 	r.Run(fmt.Sprintf(":%d", port))
 }
 
@@ -75,8 +83,8 @@ func handleRequest(ctx *gin.Context) {
     log.Print(statusCode)
     if http.StatusText(statusCode) != "" {
       ctx.AbortWithStatus(statusCode)
-    return
-  }
+      return
+    }
     panic(err)
   }
 
