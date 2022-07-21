@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -11,21 +12,36 @@ import (
 	cache "github.com/chenyahui/gin-cache"
 	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
+	redis "github.com/go-redis/redis/v8"
 
 	"github.com/DerYeger/npm-cards/backend/card"
 	"github.com/DerYeger/npm-cards/backend/lib"
 	"github.com/DerYeger/npm-cards/backend/npm"
 )
 
+func createCacheStore() persist.CacheStore {
+  redisUrl := os.Getenv("REDIS_URL")
+  if redisUrl != "" {
+    log.Print("Using Redis cache store")
+    return persist.NewRedisStore(redis.NewClient(&redis.Options{
+      Network: "tcp",
+      Addr:    redisUrl,
+    }))
+  }
+
+  log.Print("Using in-memory cache store")
+  return persist.NewMemoryStore(1 * time.Minute)
+}
+
 func StartServer(port int) {
   r := gin.Default()
 
-  memoryStore := persist.NewMemoryStore(1 * time.Minute)
+  cacheStore := createCacheStore()
 
   r.Use(gin.Logger())
   r.Use(gin.Recovery())
 
-	r.GET("/api/packages/*name", cache.CacheByRequestURI(memoryStore, 1 * time.Minute), handleRequest)
+	r.GET("/api/packages/*name", cache.CacheByRequestURI(cacheStore, 1 * time.Minute), handleRequest)
 
   r.GET("/api/health", func(ctx *gin.Context) {
     ctx.Status(http.StatusOK)
