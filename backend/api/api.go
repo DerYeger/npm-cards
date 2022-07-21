@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -22,14 +23,18 @@ import (
 func createCacheStore() persist.CacheStore {
   redisUrl := os.Getenv("REDIS_URL")
   if redisUrl != "" {
-    log.Print("Using Redis cache store")
+    log.Println("Using Redis cache store")
     return persist.NewRedisStore(redis.NewClient(&redis.Options{
       Network: "tcp",
       Addr:    redisUrl,
+      OnConnect: func(ctx context.Context, cn *redis.Conn) error {
+        log.Println("Redis connection established")
+        return nil
+      },
     }))
   }
 
-  log.Print("Using in-memory cache store")
+  log.Println("Using in-memory cache store")
   return persist.NewMemoryStore(1 * time.Minute)
 }
 
@@ -47,7 +52,7 @@ func StartServer(port int) {
     ctx.Status(http.StatusOK)
   })
 
-  log.Printf("Listening on %d", port)
+  log.Printf("Listening on %d\n", port)
 	r.Run(fmt.Sprintf(":%d", port))
 }
 
@@ -94,9 +99,7 @@ func handleRequest(ctx *gin.Context) {
 
   packageData, err := npm.GetPackageData(packageName, weeks)
   if err != nil {
-    log.Print(err)
     statusCode := err.(*npm.ApiError).StatusCode
-    log.Print(statusCode)
     if http.StatusText(statusCode) != "" {
       ctx.AbortWithStatus(statusCode)
       return
