@@ -100,5 +100,5 @@ func handleRequest(ctx *gin.Context) {
     BorderRadius: borderRadius,
   }
 
-  card.CreateCard(cardData)
+  card.CreateCard(&cardData)
 }

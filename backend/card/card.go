@@ -8,7 +8,7 @@ import (
 	svg "github.com/ajstarks/svgo"
 )
 
-func CreateCard(card lib.Card) {
+func CreateCard(card *lib.Card) {
   s := card.SVG
   s.Start(card.Size, card.Size)
 
@@ -21,11 +21,11 @@ func CreateCard(card lib.Card) {
   s.End()
 }
 
-func makeBackground(card lib.Card) {
+func makeBackground(card *lib.Card) {
   card.SVG.Roundrect(card.Padding, card.Padding, card.CardSize, card.CardSize, card.BorderRadius, card.BorderRadius, "fill:url(#background);stroke:none;")
 }
 
-func makeGraph(card lib.Card) {
+func makeGraph(card *lib.Card) {
   downloadsMax := 1
   for i := 0; i < len(card.PackageData.WeeklyDownloads); i++ {
     downloads := card.PackageData.WeeklyDownloads[i].Downloads
@@ -61,7 +61,7 @@ func makeGraph(card lib.Card) {
   card.SVG.Path(path, fmt.Sprintf("fill:none;stroke:url(#graph);stroke-width:%fpx;stroke-linejoin:round;", strokeWidth))
 }
 
-func makeDefs(card lib.Card) {
+func makeDefs(card *lib.Card) {
   s := card.SVG
   backgroundGradient := []svg.Offcolor {
     {
@@ -110,7 +110,7 @@ func makeDefs(card lib.Card) {
   s.DefEnd()
 }
 
-func makeText(card lib.Card) {
+func makeText(card *lib.Card) {
   s := card.SVG
 
   textPadding := float64(card.CardSize) / 16 + math.Sqrt(float64(card.BorderRadius))
