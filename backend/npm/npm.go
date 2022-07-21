@@ -2,7 +2,6 @@ package npm
 
 import (
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"net/http"
 	"sort"
@@ -12,6 +11,19 @@ import (
 	"github.com/DerYeger/npm-cards/backend/lib"
 	"golang.org/x/sync/errgroup"
 )
+
+type ApiError struct {
+  StatusCode int
+  Err error
+}
+
+func (e *ApiError) Error() string {
+  if e.Err != nil {
+    return e.Err.Error()
+  }
+
+  return http.StatusText(e.StatusCode)
+}
 
 func GetPackageData(packageName string, weeks int) (packageData lib.PackageData, err error) {
   packageData.Name = packageName
@@ -25,20 +37,28 @@ func GetPackageData(packageName string, weeks int) (packageData lib.PackageData,
       endpoint := "https://api.npmjs.org/downloads/point/" + startDate + ":" + endDate + "/" + packageName
       resp, err := http.Get(endpoint)
       if err != nil {
-        return err
+        return &ApiError{
+          Err: err,
+        }
       }
-      if resp.StatusCode != 200 {
-        return errors.New("404")
+      if resp.StatusCode != http.StatusOK {
+        return &ApiError{
+          StatusCode: resp.StatusCode,
+        }
       }
 
       body, err := ioutil.ReadAll(resp.Body)
       if err != nil {
-          return err
+          return &ApiError{
+          Err: err,
+        }
       }
       var packageDownloads lib.PackageDownloads
       err = json.Unmarshal(body, &packageDownloads)
       if err != nil {
-        return err
+        return &ApiError{
+          Err: err,
+        }
       }
       mu.Lock()
       packageData.WeeklyDownloads = append(packageData.WeeklyDownloads, packageDownloads)

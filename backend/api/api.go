@@ -34,50 +34,56 @@ var (
   defaultBorderRadius = 16
 )
 
-func handleRequest(c *gin.Context) {
-  weeks, err := strconv.Atoi(c.Query("weeks"))
+func handleRequest(ctx *gin.Context) {
+  weeks, err := strconv.Atoi(ctx.Query("weeks"))
   if err != nil {
     weeks = defaultWeeks
   }
   if weeks < 2 {
-    c.Status(http.StatusBadRequest)
+    ctx.AbortWithStatus(http.StatusBadRequest)
     return
   }
 
-  packageName := c.Param("name")
+  packageName := ctx.Param("name")
   if packageName != "" && packageName[0] == '/' {
     packageName = packageName[1:]
   }
   if packageName == "" {
-    c.Status(http.StatusBadRequest)
+    ctx.AbortWithStatus(http.StatusBadRequest)
     return
   }
 
-  size, err := strconv.Atoi(c.Query("size"))
+  size, err := strconv.Atoi(ctx.Query("size"))
   if err != nil {
     size = defaultSize
   }
 
-  padding, err := strconv.Atoi(c.Query("padding"))
+  padding, err := strconv.Atoi(ctx.Query("padding"))
   if err != nil {
     padding = defaultPadding
   }
 
-  borderRadius, err := strconv.Atoi(c.Query("borderRadius"))
+  borderRadius, err := strconv.Atoi(ctx.Query("borderRadius"))
   if err != nil {
     borderRadius = defaultBorderRadius
   }
 
   packageData, err := npm.GetPackageData(packageName, weeks)
   if err != nil {
-    c.Status(http.StatusNotFound)
+    log.Print(err)
+    statusCode := err.(*npm.ApiError).StatusCode
+    log.Print(statusCode)
+    if http.StatusText(statusCode) != "" {
+      ctx.AbortWithStatus(statusCode)
     return
   }
+    panic(err)
+  }
 
-  c.Header("Content-Type", "image/svg+xml")
+  ctx.Header("Content-Type", "image/svg+xml")
 
   cardData := lib.Card {
-    SVG: svg.New(c.Writer),
+    SVG: svg.New(ctx.Writer),
     PackageData: packageData,
     Size: size,
     Padding: padding,
