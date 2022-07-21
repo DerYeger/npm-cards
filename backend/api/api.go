@@ -96,7 +96,6 @@ func handleRequest(ctx *gin.Context) {
     PackageData: packageData,
     Size: size,
     Padding: padding,
-    CardSize: size - 2 * padding,
     BorderRadius: borderRadius,
   }
 

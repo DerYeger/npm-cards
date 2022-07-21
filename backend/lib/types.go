@@ -18,6 +18,29 @@ type Card struct {
   PackageData PackageData
   Size int
   Padding int
-  CardSize int
   BorderRadius int
+}
+
+func (card *Card) Weeks() int {
+  return len(card.PackageData.WeeklyDownloads)
+}
+
+func (card *Card) CardSize() int {
+  return card.Size - 2 * card.Padding
+}
+
+func (card *Card) LeftBound() int {
+  return card.Padding
+}
+
+func (card *Card) RightBound() int {
+  return card.Size - card.Padding
+}
+
+func (card *Card) TopBound() int {
+  return card.Padding
+}
+
+func (card *Card) BottomBound() int {
+  return card.Size - card.Padding
 }
