@@ -1,0 +1,18 @@
+# editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+quote_type = double
+trim_trailing_whitespace = true
+
+[*.{js,jsx,ts,tsx,vue}]
+quote_type = single
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = falsee
