@@ -39,9 +39,9 @@ function App() {
       <h1>NPM Cards</h1>
       <div className="settings">
         <div>
-          <label htmlFor="padding">Padding</label>
+          <label htmlFor="packageName">Package</label>
           <input
-            name="name"
+            name="packageName"
             type="text"
             value={packageName}
             onChange={(event) => {
