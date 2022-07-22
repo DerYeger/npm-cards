@@ -11,6 +11,7 @@ import (
 	svg "github.com/ajstarks/svgo"
 	cache "github.com/chenyahui/gin-cache"
 	"github.com/chenyahui/gin-cache/persist"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	redis "github.com/go-redis/redis/v8"
 
@@ -35,20 +36,21 @@ func createCacheStore() (persist.CacheStore, time.Duration) {
 }
 
 func StartServer(port int) {
-  r := gin.Default()
+  router := gin.Default()
   cacheStore, cacheDuration := createCacheStore()
 
-  r.Use(gin.Logger())
-  r.Use(gin.Recovery())
+  router.Use(gin.Logger())
+  router.Use(gin.Recovery())
+  router.Use(cors.Default())
 
-	r.GET("/api/packages/*name", cache.CacheByRequestURI(cacheStore, cacheDuration, cache.IgnoreQueryOrder()), handleRequest)
+	router.GET("/api/packages/*name", cache.CacheByRequestURI(cacheStore, cacheDuration, cache.IgnoreQueryOrder()), handleRequest)
 
-  r.GET("/api/health", func(ctx *gin.Context) {
+  router.GET("/api/health", func(ctx *gin.Context) {
     ctx.Status(http.StatusOK)
   })
 
   log.Printf("Listening on %d\n", port)
-	r.Run(fmt.Sprintf(":%d", port))
+	router.Run(fmt.Sprintf(":%d", port))
 }
 
 var (
