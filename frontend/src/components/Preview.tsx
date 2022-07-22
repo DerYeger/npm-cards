@@ -5,7 +5,7 @@ export interface PreviewProps extends CardData {
   contain: boolean
 }
 
-const apiEndpoint = 'http://localhost:8080'
+const apiEndpoint = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'
 
 const Preview: FC<PreviewProps> = ({
   packageName,
