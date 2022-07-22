@@ -1,7 +1,6 @@
 package api
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -20,33 +19,29 @@ import (
 	"github.com/DerYeger/npm-cards/backend/npm"
 )
 
-func createCacheStore() persist.CacheStore {
+func createCacheStore() (persist.CacheStore, time.Duration) {
   redisUrl := os.Getenv("REDIS_URL")
   if redisUrl != "" {
-    log.Println("Using Redis cache store")
-    return persist.NewRedisStore(redis.NewClient(&redis.Options{
-      Network: "tcp",
-      Addr:    redisUrl,
-      OnConnect: func(ctx context.Context, cn *redis.Conn) error {
-        log.Println("Redis connection established")
-        return nil
-      },
-    }))
+    log.Println("Using Redis cache store with 1 day duration")
+    opts, err := redis.ParseURL(redisUrl)
+    if err != nil {
+      log.Panic(err)
+    }
+    return persist.NewRedisStore(redis.NewClient(opts)), 24 * time.Hour
   }
 
-  log.Println("Using in-memory cache store")
-  return persist.NewMemoryStore(1 * time.Minute)
+  log.Println("Using in-memory cache store with 1 minute duration")
+  return persist.NewMemoryStore(1 * time.Minute), 1 * time.Minute
 }
 
 func StartServer(port int) {
   r := gin.Default()
-
-  cacheStore := createCacheStore()
+  cacheStore, cacheDuration := createCacheStore()
 
   r.Use(gin.Logger())
   r.Use(gin.Recovery())
 
-	r.GET("/api/packages/*name", cache.CacheByRequestURI(cacheStore, 1 * time.Minute), handleRequest)
+	r.GET("/api/packages/*name", cache.CacheByRequestURI(cacheStore, cacheDuration, cache.IgnoreQueryOrder()), handleRequest)
 
   r.GET("/api/health", func(ctx *gin.Context) {
     ctx.Status(http.StatusOK)
