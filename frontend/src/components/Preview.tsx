@@ -23,7 +23,8 @@ const Preview: FC<PreviewProps> = ({
   }
 
   const [isLoading, setIsLoading] = useState(false)
-  const [isValid, setIsValid] = useState(false)
+  const [error, setError] = useState<number | undefined>()
+  const [image, setImage] = useState<string | undefined>()
 
   const cardUrl = lib.getCardUrl({
     packageName,
@@ -36,28 +37,38 @@ const Preview: FC<PreviewProps> = ({
   useEffect(() => {
     async function fetchCard() {
       setIsLoading(true)
+      setError(undefined)
       try {
         const res = await fetch(cardUrl)
-        setIsValid(res.status === 200)
+        const blob = URL.createObjectURL(await res.blob())
+        if (res.status === 200) {
+          setImage(blob)
+        } else {
+          setError(res.status)
+        }
       } catch (err) {}
       setIsLoading(false)
     }
     fetchCard()
   }, [cardUrl])
 
-  if (!isValid) {
+  if (isLoading) {
+    return <Spinner />
+  }
+
+  if (error === 404) {
     return <span>Not found</span>
   }
 
-  if (isLoading) {
-    return <Spinner />
+  if (error !== undefined) {
+    return <span>Something went wrong</span>
   }
 
   return (
     <>
       <CopyField cardUrl={cardUrl} />
       <img
-        src={cardUrl}
+        src={image}
         style={{
           maxWidth: contain ? '100%' : 'initial',
           display: 'block',
