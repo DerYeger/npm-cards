@@ -22,7 +22,7 @@ func CreateCard(card *lib.Card) {
 }
 
 func makeBackground(card *lib.Card) {
-  card.SVG.Roundrect(card.LeftBound(), card.TopBound(), card.CardSize(), card.CardSize(), card.BorderRadius, card.BorderRadius, "fill:url(#background);stroke:none;")
+  card.SVG.Roundrect(int(card.LeftBound()), int(card.TopBound()), card.CardSize(), card.CardSize(), card.BorderRadius, card.BorderRadius, "fill:url(#background);stroke:none;")
 }
 
 func makeGraph(card *lib.Card) {
@@ -36,24 +36,24 @@ func makeGraph(card *lib.Card) {
 
   strokeWidth := float64(card.CardSize()) / 128
 
-  segmentWidth := card.CardSize() / (card.Weeks() - 1)
+  segmentWidth := float64(card.CardSize()) / float64((card.Weeks() - 1))
 
   path := ""
   for i := 0; i < card.Weeks(); i++ {
-    xCord := card.LeftBound() + i * segmentWidth
+    xCord := card.LeftBound() + float64(i) * segmentWidth
     availableHeight := card.CardSize() / 2 - card.BorderRadius
     yCord := float64(card.PackageData.WeeklyDownloads[i].Downloads) / float64(downloadsMax) * float64(availableHeight)
     yCord = float64(card.BottomBound()) - yCord - float64(card.BorderRadius) - strokeWidth / 2
     if i == 0 {
       // Add extra point at left edge for smooth cutoff
-      path = fmt.Sprintf("M%d,%d", card.LeftBound(), int(yCord))
-      xCord = card.LeftBound() + int(strokeWidth)
+      path = fmt.Sprintf("M%f,%f", card.LeftBound(), yCord)
+      xCord = card.LeftBound() + strokeWidth
     } else if i == card.Weeks() - 1 {
       // Add extra point at right edge for smooth cutoff
-      path = fmt.Sprintf("%sL%d,%d", path, card.RightBound() - int(strokeWidth), int(yCord))
+      path = fmt.Sprintf("%sL%f,%f", path, card.RightBound() - strokeWidth, yCord)
       xCord = card.RightBound()
     }
-    path = fmt.Sprintf("%sL%d,%d", path, xCord, int(yCord))
+    path = fmt.Sprintf("%sL%f,%f", path, xCord, yCord)
   }
 
   card.SVG.Path(path, fmt.Sprintf("fill:none;stroke:url(#graph);stroke-width:%fpx;stroke-linejoin:round;", strokeWidth))

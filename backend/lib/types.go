@@ -29,18 +29,18 @@ func (card *Card) CardSize() int {
   return card.Size - 2 * card.Padding
 }
 
-func (card *Card) LeftBound() int {
-  return card.Padding
+func (card *Card) LeftBound() float64 {
+  return float64(card.Padding)
 }
 
-func (card *Card) RightBound() int {
-  return card.Size - card.Padding
+func (card *Card) RightBound() float64 {
+  return float64(card.Size - card.Padding)
 }
 
-func (card *Card) TopBound() int {
-  return card.Padding
+func (card *Card) TopBound() float64 {
+  return float64(card.Padding)
 }
 
-func (card *Card) BottomBound() int {
-  return card.Size - card.Padding
+func (card *Card) BottomBound() float64 {
+  return float64(card.Size - card.Padding)
 }
