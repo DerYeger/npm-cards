@@ -21,13 +21,13 @@ Configurable download graphs for NPM packages.
 </p>
 
 <p align="center">
-  <a href="https://github.com/DerYeger/jan-mueller/actions/workflows/ci.yml">
+  <a href="https://npm-cards.vercel.app/?package=react&size=256&padding=0&borderRadius=16&weeks=64">
     <img alt="React" src="https://npm-cards.up.railway.app/api/packages/react?size=256&padding=0&borderRadius=16&weeks=64">
   </a>
-  <a href="https://github.com/DerYeger/jan-mueller/actions/workflows/cd.yml">
+  <a href="https://npm-cards.vercel.app/?package=vite&size=256&padding=0&borderRadius=16&weeks=64">
     <img alt="Vite" src="https://npm-cards.up.railway.app/api/packages/vite?size=256&padding=0&borderRadius=16&weeks=64">
   </a>
-  <a href="https://dashboard.cypress.io/projects/nhkgy5/runs">
+  <a href="https://npm-cards.vercel.app/?package=@yeger/vue-masonry-wall&size=256&padding=0&borderRadius=16&weeks=64">
     <img alt="@yeger/vue-masonry-wall" src="https://npm-cards.up.railway.app/api/packages/@yeger/vue-masonry-wall?size=256&padding=0&borderRadius=16&weeks=64">
   </a>
 </p>
