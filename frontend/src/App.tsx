@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useState } from 'react'
 import debounce from 'lodash.debounce'
-
-import Preview from '@/components/Preview'
+import { useEffect, useMemo, useState } from 'react'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 import '@/App.css'
-import { CardData } from '@/types'
 import Footer from '@/components/Footer'
+import Preview from '@/components/Preview'
+import type { CardData } from '@/types'
 
 function App() {
   const params = new URLSearchParams(window.location.search)
@@ -164,6 +165,11 @@ function App() {
         <Preview {...cardData} contain={contain} />
       </main>
       <Footer />
+      <ToastContainer
+        autoClose={1000}
+        pauseOnFocusLoss={false}
+        hideProgressBar
+      />
     </div>
   )
 }

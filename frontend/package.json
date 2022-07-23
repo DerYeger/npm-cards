@@ -1,9 +1,9 @@
 {
   "name": "npm-cards",
-  "description": "Configurable downloads graphs for NPM packages.",
   "type": "module",
   "version": "0.0.0",
   "private": true,
+  "description": "Configurable downloads graphs for NPM packages.",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -15,7 +15,8 @@
     "lodash.debounce": "4.0.8",
     "react": "^18.2.0",
     "react-copy-to-clipboard": "5.1.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-toastify": "9.0.7"
   },
   "devDependencies": {
     "@types/lodash.debounce": "4.0.7",

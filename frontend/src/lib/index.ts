@@ -1,4 +1,4 @@
-import { CardData } from '@/types'
+import type { CardData } from '@/types'
 
 const apiEndpoint = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'
 

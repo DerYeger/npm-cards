@@ -1,8 +1,10 @@
-import CopyField from '@/components/CopyField'
+import type { FC } from 'react'
+import { useEffect, useState } from 'react'
+
+import CopyToClipboardButton from '@/components/CopyToClipboardButton'
 import Spinner from '@/components/Spinner'
 import lib from '@/lib'
-import { CardData } from '@/types'
-import { FC, useEffect, useState } from 'react'
+import type { CardData } from '@/types'
 
 export interface PreviewProps extends CardData {
   contain: boolean
@@ -66,7 +68,7 @@ const Preview: FC<PreviewProps> = ({
 
   return (
     <>
-      <CopyField cardUrl={cardUrl} />
+      <CopyToClipboardButton cardUrl={cardUrl} />
       <img
         src={image}
         style={{
