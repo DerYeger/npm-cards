@@ -1,6 +1,8 @@
 # NPM Cards
 
-> Configurable downloads graphs for NPM packages.
+> Configurable download graphs for NPM packages.
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/pk27Nm?referralCode=FzqVFW)
 
 ## Backend
 
@@ -10,12 +12,16 @@ Behind the scenes, the NPM API is queried to gather weekly download statistics f
 
 [SVGo](https://github.com/ajstarks/svgo) is used for generating SVGs programmatically.
 
+The backend is hosted by [Railway](https://railway.app) at [npm-cards.up.railway.app](https://npm-cards.up.railway.app).
+
 ## Frontend
 
 The frontend is a React SPA built with Vite 3.
 It serves as a playground for the backend by enabling experimentation with the configurable parameters.
 
 It presents previews of cards and an option to copy card links to the clipboard.
+
+The frontend is hosted by [Vercel](https://vercel.com) at [npm-cards.vercel.app](https://npm-cards.vercel.app).
 
 ## License
 
