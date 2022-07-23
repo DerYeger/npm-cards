@@ -4,6 +4,20 @@
   text-align: center;
 }
 
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+main {
+  flex-grow: 1;
+}
+
+main > * + * {
+  margin-top: 2rem;
+}
+
 .settings {
   display: flex;
   gap: 1rem;
@@ -22,7 +36,7 @@
   text-align: start;
 }
 
-@media only screen and (min-width: 901px) {
+@media only screen and (min-width: 601px) {
   .settings {
     flex-direction: row;
     flex-wrap: wrap;
@@ -37,6 +51,6 @@
   }
 
   .settings label {
-    text-align: middle;
+    text-align: center;
   }
 }

@@ -1,11 +1,11 @@
+import CopyField from '@/components/CopyField'
+import lib from '@/lib'
 import { CardData } from '@/types'
 import { FC, useEffect, useState } from 'react'
 
 export interface PreviewProps extends CardData {
   contain: boolean
 }
-
-const apiEndpoint = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'
 
 const Preview: FC<PreviewProps> = ({
   packageName,
@@ -16,34 +16,43 @@ const Preview: FC<PreviewProps> = ({
   contain,
 }) => {
   if (
-    !packageName ||
-    size === undefined ||
-    padding === undefined ||
-    borderRadius === undefined ||
-    weeks === undefined
+    !lib.isCardDataComplete({ packageName, size, padding, borderRadius, weeks })
   ) {
     return <span>Missing input</span>
   }
 
-  const cardSrc = `${apiEndpoint}/api/packages/${packageName}?size=${size}&padding=${padding}&borderRadius=${borderRadius}&weeks=${weeks}`
+  const cardUrl = lib.getCardUrl({
+    packageName,
+    size,
+    padding,
+    borderRadius,
+    weeks,
+  })
+
   const [isValid, setIsValid] = useState(false)
   useEffect(() => {
-    fetch(cardSrc)
+    fetch(cardUrl)
       .then((res) => setIsValid(res.status === 200))
       .catch(console.info)
-  }, [cardSrc])
+  }, [cardUrl])
 
   if (!isValid) {
     return <span>Not found</span>
   }
 
   return (
-    <img
-      src={cardSrc}
-      style={{
-        maxWidth: contain ? '100%' : 'initial',
-      }}
-    />
+    <>
+      <CopyField cardUrl={cardUrl} />
+      <img
+        src={cardUrl}
+        style={{
+          maxWidth: contain ? '100%' : 'initial',
+          display: 'block',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+      />
+    </>
   )
 }
 

@@ -5,6 +5,7 @@ import Preview from '@/components/Preview'
 
 import '@/App.css'
 import { CardData } from '@/types'
+import Footer from '@/components/Footer'
 
 function App() {
   const [packageName, setPackageName] = useState('@yeger/vue-masonry-wall')
@@ -36,99 +37,119 @@ function App() {
 
   return (
     <div className="App">
-      <h1>NPM Cards</h1>
-      <div className="settings">
-        <div>
-          <label htmlFor="packageName">Package</label>
-          <input
-            name="packageName"
-            type="text"
-            value={packageName}
-            onChange={(event) => {
-              setPackageName(event.target.value)
-              debouncedSetCardData({
-                ...cardData,
-                packageName: event.target.value,
-              })
-            }}
-          />
+      <main>
+        <h1>NPM Cards</h1>
+        <div className="settings">
+          <div>
+            <label
+              htmlFor="packageName"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              Package
+            </label>
+            <input
+              name="packageName"
+              type="text"
+              value={packageName}
+              onChange={(event) => {
+                setPackageName(event.target.value)
+                debouncedSetCardData({
+                  ...cardData,
+                  packageName: event.target.value,
+                })
+              }}
+              style={{
+                flexGrow: '1',
+              }}
+            />
+          </div>
+          <div>
+            <label htmlFor="size">Size ({size}px)</label>
+            <input
+              name="size"
+              type="range"
+              min="128"
+              max="1024"
+              value={size}
+              onChange={(event) => {
+                setSize(+event.target.value)
+                debouncedSetCardData({ ...cardData, size: +event.target.value })
+              }}
+              step="1"
+            />
+          </div>
+          <div>
+            <label htmlFor="padding">Padding ({padding}px)</label>
+            <input
+              name="padding"
+              type="range"
+              min="0"
+              max="128"
+              value={padding}
+              onChange={(event) => {
+                setPadding(+event.target.value)
+                debouncedSetCardData({
+                  ...cardData,
+                  padding: +event.target.value,
+                })
+              }}
+              step="1"
+            />
+          </div>
+          <div>
+            <label htmlFor="borderRadius">
+              Border Radius ({borderRadius}px)
+            </label>
+            <input
+              name="borderRadius"
+              type="range"
+              min="0"
+              max="128"
+              value={borderRadius}
+              onChange={(event) => {
+                setBordeRadius(+event.target.value)
+                debouncedSetCardData({
+                  ...cardData,
+                  borderRadius: +event.target.value,
+                })
+              }}
+              step="1"
+            />
+          </div>
+          <div>
+            <label htmlFor="weeks">Weeks ({weeks})</label>
+            <input
+              name="weeks"
+              type="range"
+              min="2"
+              max="200"
+              value={weeks}
+              onChange={(event) => {
+                setWeeks(+event.target.value)
+                debouncedSetCardData({
+                  ...cardData,
+                  weeks: +event.target.value,
+                })
+              }}
+              step="1"
+            />
+          </div>
+          <div>
+            <label htmlFor="contain">Contain</label>
+            <input
+              type="checkbox"
+              checked={contain}
+              onChange={() => setContain(!contain)}
+            ></input>
+          </div>
         </div>
-        <div>
-          <label htmlFor="size">Size</label>
-          <input
-            name="size"
-            type="range"
-            min="128"
-            max="1024"
-            value={size}
-            onChange={(event) => {
-              setSize(+event.target.value)
-              debouncedSetCardData({ ...cardData, size: +event.target.value })
-            }}
-            step="1"
-          />
-        </div>
-        <div>
-          <label htmlFor="padding">Padding</label>
-          <input
-            name="padding"
-            type="range"
-            min="0"
-            max="128"
-            value={padding}
-            onChange={(event) => {
-              setPadding(+event.target.value)
-              debouncedSetCardData({
-                ...cardData,
-                padding: +event.target.value,
-              })
-            }}
-            step="1"
-          />
-        </div>
-        <div>
-          <label htmlFor="borderRadius">Border Radius</label>
-          <input
-            name="borderRadius"
-            type="range"
-            min="0"
-            max="128"
-            value={borderRadius}
-            onChange={(event) => {
-              setBordeRadius(+event.target.value)
-              debouncedSetCardData({
-                ...cardData,
-                borderRadius: +event.target.value,
-              })
-            }}
-            step="1"
-          />
-        </div>
-        <div>
-          <label htmlFor="weeks">Weeks</label>
-          <input
-            name="weeks"
-            type="range"
-            min="2"
-            max="200"
-            value={weeks}
-            onChange={(event) => {
-              setWeeks(+event.target.value)
-              debouncedSetCardData({ ...cardData, weeks: +event.target.value })
-            }}
-            step="1"
-          />
-        </div>
-        <div>
-          <label htmlFor="contain">Contain</label>
-          <input
-            type="checkbox"
-            checked={contain}
-            onChange={() => setContain(!contain)}
-          ></input>
-        </div>
-      </div>
-      <Preview {...cardData} contain={contain} />
+        <Preview {...cardData} contain={contain} />
+      </main>
+      <Footer />
     </div>
   )
 }
