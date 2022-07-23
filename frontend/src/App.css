@@ -18,6 +18,16 @@ main > * + * {
   margin-top: 2rem;
 }
 
+h1 {
+  background: -webkit-linear-gradient(45deg, #0090f6, red);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  widthl: -moz-fit-content;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .settings {
   display: flex;
   gap: 1rem;

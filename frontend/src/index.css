@@ -13,16 +13,18 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  --primary: #0070f3;
 }
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--primary);
   text-decoration: inherit;
 }
 
 a:hover {
-  color: #535bf2;
+  filter: brightness(150%);
 }
 
 body {
@@ -39,7 +41,7 @@ h1 {
 }
 
 button {
-  background: #0070f3;
+  background: var(--primary);
   border-radius: 4px;
   border: 1px solid transparent;
   color: white;
@@ -50,10 +52,6 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover,
-input[type='text']:hover {
-  border-color: #646cff;
-}
 button:focus,
 button:focus-visible,
 input[type='text']:focus,
@@ -62,7 +60,8 @@ input[type='text']:focus-visible {
 }
 
 input[type='text'] {
-  border: 1px solid;
+  background: transparent;
+  border: 1px solid var(--primary);
   border-radius: 4px;
   font-size: 1rem;
   padding: 0.25em 0.5em;
@@ -75,6 +74,6 @@ input[type='text'] {
     background-color: #ffffff;
   }
   a:hover {
-    color: #747bff;
+    filter: brightness(75%);
   }
 }
