@@ -1,12 +1,40 @@
-# NPM Cards
+<h1 align="center">NPM Cards</h1>
 
-> Configurable download graphs for NPM packages.
+<p align="center">
+Configurable download graphs for NPM packages.
+</p>
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/pk27Nm?referralCode=FzqVFW)
+<p align="center">
+  <a href="https://railway.app/new/template/pk27Nm?referralCode=FzqVFW">
+    <img alt="Deploy on Railway" src="https://railway.app/button.svg">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://npm-cards.vercel.app">
+    Frontend
+  </a>
+  —
+  <a href="https://npm-cards.up.railway.app">
+    Backend
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/DerYeger/jan-mueller/actions/workflows/ci.yml">
+    <img alt="React" src="https://npm-cards.up.railway.app/api/packages/react?size=256&padding=0&borderRadius=16&weeks=64">
+  </a>
+  <a href="https://github.com/DerYeger/jan-mueller/actions/workflows/cd.yml">
+    <img alt="Vite" src="https://npm-cards.up.railway.app/api/packages/vite?size=256&padding=0&borderRadius=16&weeks=64">
+  </a>
+  <a href="https://dashboard.cypress.io/projects/nhkgy5/runs">
+    <img alt="@yeger/vue-masonry-wall" src="https://npm-cards.up.railway.app/api/packages/@yeger/vue-masonry-wall?size=256&padding=0&borderRadius=16&weeks=64">
+  </a>
+</p>
 
 ## Backend
 
-The lightweight Go backend uses [Gin](https://github.com/gin-gonic/gin) and in-memory or Redis-based [caching](https://github.com/chenyahui/gin-cache) for low latency.
+The lightweight Go backend uses [Gin](https://github.com/gin-gonic/gin) and in-memory or Redis-based [caching](https://github.com/chenyahui/gin-cache) for low latencies.
 
 Behind the scenes, the NPM API is queried to gather weekly download statistics for graph generation.
 
@@ -22,6 +50,13 @@ It serves as a playground for the backend by enabling experimentation with the c
 It presents previews of cards and an option to copy card links to the clipboard.
 
 The frontend is hosted by [Vercel](https://vercel.com) at [npm-cards.vercel.app](https://npm-cards.vercel.app).
+
+## Usage
+
+1. Visit [npm-cards.vercel.app](https://npm-cards.vercel.app)
+2. Configure the card to fit your needs. While the frontend only allows for certain input ranges concerning size, padding, etc., modyfing the output URL allows for additional customization.
+3. Press "Copy to Clipboard".
+4. Embed the image URL in HTML, Markdown, etc.
 
 ## License
 
