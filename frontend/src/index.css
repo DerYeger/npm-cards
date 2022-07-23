@@ -30,6 +30,7 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  overflow-y: scroll;
 }
 
 h1 {

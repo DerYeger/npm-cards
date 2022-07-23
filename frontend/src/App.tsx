@@ -8,15 +8,17 @@ import { CardData } from '@/types'
 import Footer from '@/components/Footer'
 
 function App() {
-  const [packageName, setPackageName] = useState('@yeger/vue-masonry-wall')
+  const params = new URLSearchParams(window.location.search)
 
-  const [size, setSize] = useState(512)
-
-  const [padding, setPadding] = useState(0)
-
-  const [borderRadius, setBordeRadius] = useState(16)
-
-  const [weeks, setWeeks] = useState(16)
+  const [packageName, setPackageName] = useState(
+    params.get('package') ?? '@yeger/vue-masonry-wall'
+  )
+  const [size, setSize] = useState(+(params.get('size') ?? 512))
+  const [padding, setPadding] = useState(+(params.get('padding') ?? 0))
+  const [borderRadius, setBordeRadius] = useState(
+    +(params.get('borderRadius') ?? 16)
+  )
+  const [weeks, setWeeks] = useState(+(params.get('weeks') ?? 16))
 
   const [cardData, setCardData] = useState<CardData>({
     packageName,
@@ -25,7 +27,19 @@ function App() {
     borderRadius,
     weeks,
   })
-  const debouncedSetCardData = useMemo(() => debounce(setCardData, 300), [])
+  const debouncedSetCardData = useMemo(
+    () =>
+      debounce((cardData: CardData) => {
+        params.set('package', cardData.packageName)
+        params.set('size', cardData.size.toString())
+        params.set('padding', cardData.padding.toString())
+        params.set('borderRadius', cardData.borderRadius.toString())
+        params.set('weeks', cardData.weeks.toString())
+        window.history.replaceState({}, 'NPM Cards', `?${params.toString()}`)
+        setCardData(cardData)
+      }, 300),
+    []
+  )
 
   useEffect(() => {
     return () => {
