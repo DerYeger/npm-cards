@@ -136,7 +136,7 @@ func handleFallbackPage(ctx *gin.Context) {
           <a href="/api/packages/react?size=256&padding=0&borderRadius=16&weeks=64">
             <img alt="React" src="/api/packages/react?size=256&padding=0&borderRadius=16&weeks=64">
           </a>
-          <a href="/api/packages/vite?size=256&padding=0&borderRadius=16&weeks=6">
+          <a href="/api/packages/vite?size=256&padding=0&borderRadius=16&weeks=64">
             <img alt="Vite" src="/api/packages/vite?size=256&padding=0&borderRadius=16&weeks=64">
           </a>
           <a href="/api/packages/@yeger/vue-masonry-wall?size=256&padding=0&borderRadius=16&weeks=64">
