@@ -8,6 +8,7 @@ const CopyField: FC<{ cardUrl: string }> = ({ cardUrl }) => {
       <button
         style={{
           display: 'block',
+          fontSize: '0.75rem',
           marginLeft: 'auto',
           marginRight: 'auto',
         }}

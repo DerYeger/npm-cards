@@ -1,4 +1,5 @@
 import CopyField from '@/components/CopyField'
+import Spinner from '@/components/Spinner'
 import lib from '@/lib'
 import { CardData } from '@/types'
 import { FC, useEffect, useState } from 'react'
@@ -21,6 +22,9 @@ const Preview: FC<PreviewProps> = ({
     return <span>Missing input</span>
   }
 
+  const [isLoading, setIsLoading] = useState(false)
+  const [isValid, setIsValid] = useState(false)
+
   const cardUrl = lib.getCardUrl({
     packageName,
     size,
@@ -29,15 +33,24 @@ const Preview: FC<PreviewProps> = ({
     weeks,
   })
 
-  const [isValid, setIsValid] = useState(false)
   useEffect(() => {
-    fetch(cardUrl)
-      .then((res) => setIsValid(res.status === 200))
-      .catch(console.info)
+    async function fetchCard() {
+      setIsLoading(true)
+      try {
+        const res = await fetch(cardUrl)
+        setIsValid(res.status === 200)
+      } catch (err) {}
+      setIsLoading(false)
+    }
+    fetchCard()
   }, [cardUrl])
 
   if (!isValid) {
     return <span>Not found</span>
+  }
+
+  if (isLoading) {
+    return <Spinner />
   }
 
   return (

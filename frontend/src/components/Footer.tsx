@@ -12,6 +12,7 @@ const Footer: FC = () => {
       >
         GitHub
       </a>
+      <span>Made by Jan with 🐹 and ⚛️</span>
     </footer>
   )
 }
