@@ -43,6 +43,9 @@ func StartServer(port int) {
   router.Use(gin.Recovery())
   router.Use(cors.Default())
 
+  router.GET("/", handleFallbackPage)
+  router.GET("/api/packages", handleFallbackPage)
+
 	router.GET("/api/packages/*name", cache.CacheByRequestURI(cacheStore, cacheDuration, cache.IgnoreQueryOrder()), handleRequest)
 
   router.GET("/api/health", func(ctx *gin.Context) {
@@ -116,4 +119,32 @@ func handleRequest(ctx *gin.Context) {
   }
 
   card.CreateCard(&cardData)
+}
+
+func handleFallbackPage(ctx *gin.Context) {
+  ctx.Header("Content-Type", "text/html; charset=utf-8")
+  ctx.Header("Cache-Control", "public, max-age=86400, immutable")
+  ctx.String(http.StatusOK, `
+    <html>
+      <body>
+        <h1>NPM Cards API</h1>
+        <p>
+          Welcome to NPM Cards! The API is available at <a href="/api/packages/:packageName">/api/packages/:packageName</a>.
+        </p>
+        <h2>Examples:</h2>
+        <div>
+          <a href="/api/packages/react?size=256&padding=0&borderRadius=16&weeks=64">
+            <img alt="React" src="/api/packages/react?size=256&padding=0&borderRadius=16&weeks=64">
+          </a>
+          <a href="/api/packages/vite?size=256&padding=0&borderRadius=16&weeks=6">
+            <img alt="Vite" src="/api/packages/vite?size=256&padding=0&borderRadius=16&weeks=64">
+          </a>
+          <a href="/api/packages/@yeger/vue-masonry-wall?size=256&padding=0&borderRadius=16&weeks=64">
+            <img alt="@yeger/vue-masonry-wall" src="/api/packages/@yeger/vue-masonry-wall?size=256&padding=0&borderRadius=16&weeks=64">
+          </a>
+          </ul>
+        </div>
+      </body>
+    </html>`,
+  )
 }
