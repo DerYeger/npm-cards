@@ -6,6 +6,8 @@ import (
 
 	"github.com/DerYeger/npm-cards/backend/lib"
 	svg "github.com/ajstarks/svgo"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 )
 
 func CreateCard(card *lib.Card) {
@@ -122,7 +124,9 @@ func makeText(card *lib.Card) {
   s.Text(int(textStart), int(textStart + titleSize / 2), title, fmt.Sprintf("dominant-baseline:middle;color:%s;fill:%s;font-size:%fpx;font-family:sans-serif;", titleColor, titleColor, titleSize))
 
   recentDownloads :=  card.PackageData.WeeklyDownloads[card.Weeks() - 1].Downloads
-  subtitle := fmt.Sprintf("%d downloads last week", recentDownloads)
+
+  printer := message.NewPrinter(language.English)
+  subtitle := printer.Sprintf("%d downloads last week", recentDownloads)
   subtitleColor := "#ccc"
   subtitleSize := math.Min(availableSpace / (0.5 * float64(len(subtitle))), 2.0 / 3.0 * titleSize)
   s.Text(int(textStart), int(textStart + titleSize / 2 + textPadding + subtitleSize / 2), subtitle, fmt.Sprintf("dominant-baseline:middle;color:%s;fill:%s;font-size:%fpx;font-family:sans-serif;", subtitleColor, subtitleColor, subtitleSize))
