@@ -182,6 +182,10 @@ function App() {
               value={{ value: theme, label: theme }}
               options={themeOptions}
               styles={{
+                option: (provided, option) => ({
+                  ...provided,
+                  color: option.isSelected ? provided.color : 'black',
+                }),
                 control: (provided) => ({ ...provided, width: 200 }),
               }}
               onChange={(change) => {
