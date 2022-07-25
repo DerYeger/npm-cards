@@ -16,10 +16,18 @@ const Preview: FC<PreviewProps> = ({
   padding,
   borderRadius,
   weeks,
+  theme,
   contain,
 }) => {
   if (
-    !lib.isCardDataComplete({ packageName, size, padding, borderRadius, weeks })
+    !lib.isCardDataComplete({
+      packageName,
+      size,
+      padding,
+      borderRadius,
+      weeks,
+      theme,
+    })
   ) {
     return <span>Missing input</span>
   }
@@ -34,6 +42,7 @@ const Preview: FC<PreviewProps> = ({
     padding,
     borderRadius,
     weeks,
+    theme,
   })
 
   useEffect(() => {

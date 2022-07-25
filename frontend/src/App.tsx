@@ -1,12 +1,14 @@
 import debounce from 'lodash.debounce'
 import { useEffect, useMemo, useState } from 'react'
+import Select from 'react-select'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 import '@/App.css'
 import Footer from '@/components/Footer'
 import Preview from '@/components/Preview'
-import type { CardData } from '@/types'
+import type { CardData, Theme } from '@/types'
+import { themes } from '@/types'
 
 function App() {
   const params = new URLSearchParams(window.location.search)
@@ -20,6 +22,15 @@ function App() {
     +(params.get('borderRadius') ?? 16)
   )
   const [weeks, setWeeks] = useState(+(params.get('weeks') ?? 16))
+  const preselectedTheme = themes.includes(params.get('theme') as Theme)
+    ? (params.get('theme') as Theme)
+    : 'dark'
+  const [theme, setTheme] = useState<Theme>(preselectedTheme)
+
+  const themeOptions = themes.map((theme) => ({
+    value: theme,
+    label: theme,
+  }))
 
   const [cardData, setCardData] = useState<CardData>({
     packageName,
@@ -27,6 +38,7 @@ function App() {
     padding,
     borderRadius,
     weeks,
+    theme,
   })
   const debouncedSetCardData = useMemo(
     () =>
@@ -36,6 +48,7 @@ function App() {
         params.set('padding', cardData.padding.toString())
         params.set('borderRadius', cardData.borderRadius.toString())
         params.set('weeks', cardData.weeks.toString())
+        params.set('theme', cardData.theme)
         window.history.replaceState({}, 'NPM Cards', `?${params.toString()}`)
         setCardData(cardData)
       }, 300),
@@ -151,6 +164,36 @@ function App() {
                 })
               }}
               step="1"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="theme"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              Theme
+            </label>
+            <Select
+              name="theme"
+              value={{ value: theme, label: theme }}
+              options={themeOptions}
+              styles={{
+                control: (provided) => ({ ...provided, width: 200 }),
+              }}
+              onChange={(change) => {
+                if (change == null) {
+                  return
+                }
+                setTheme(change.value)
+                debouncedSetCardData({
+                  ...cardData,
+                  theme: change.value,
+                })
+              }}
             />
           </div>
           <div>

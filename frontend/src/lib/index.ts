@@ -8,8 +8,9 @@ const getCardUrl = ({
   padding,
   borderRadius,
   weeks,
+  theme,
 }: CardData) => {
-  return `${apiEndpoint}/api/packages/${packageName}?size=${size}&padding=${padding}&borderRadius=${borderRadius}&weeks=${weeks}`
+  return `${apiEndpoint}/api/packages/${packageName}?size=${size}&padding=${padding}&borderRadius=${borderRadius}&weeks=${weeks}&theme=${theme}`
 }
 
 const isCardDataComplete = ({
@@ -18,12 +19,14 @@ const isCardDataComplete = ({
   padding,
   borderRadius,
   weeks,
+  theme,
 }: CardData) => {
   return (
     (packageName && size !== undefined) ||
     padding !== undefined ||
     borderRadius !== undefined ||
-    weeks !== undefined
+    weeks !== undefined ||
+    theme !== undefined
   )
 }
 
