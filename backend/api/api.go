@@ -97,6 +97,8 @@ func handleRequest(ctx *gin.Context) {
     borderRadius = defaultBorderRadius
   }
 
+  theme := lib.StringToTheme(ctx.Query("theme"))
+
   packageData, err := npm.GetPackageData(packageName, weeks)
   if err != nil {
     statusCode := err.(*npm.ApiError).StatusCode
@@ -116,6 +118,7 @@ func handleRequest(ctx *gin.Context) {
     Size: size,
     Padding: padding,
     BorderRadius: borderRadius,
+    Theme: theme,
   }
 
   card.CreateCard(&cardData)
@@ -136,8 +139,8 @@ func handleFallbackPage(ctx *gin.Context) {
           <a href="/api/packages/react?size=256&padding=0&borderRadius=16&weeks=64">
             <img alt="React" src="/api/packages/react?size=256&padding=0&borderRadius=16&weeks=64">
           </a>
-          <a href="/api/packages/vite?size=256&padding=0&borderRadius=16&weeks=64">
-            <img alt="Vite" src="/api/packages/vite?size=256&padding=0&borderRadius=16&weeks=64">
+          <a href="/api/packages/vite?size=256&padding=0&borderRadius=16&weeks=64&theme=light">
+            <img alt="Vite" src="/api/packages/vite?size=256&padding=0&borderRadius=16&weeks=64&theme=light">
           </a>
           <a href="/api/packages/@yeger/vue-masonry-wall?size=256&padding=0&borderRadius=16&weeks=64">
             <img alt="@yeger/vue-masonry-wall" src="/api/packages/@yeger/vue-masonry-wall?size=256&padding=0&borderRadius=16&weeks=64">

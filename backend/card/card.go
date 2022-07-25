@@ -5,7 +5,6 @@ import (
 	"math"
 
 	"github.com/DerYeger/npm-cards/backend/lib"
-	svg "github.com/ajstarks/svgo"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 )
@@ -24,7 +23,7 @@ func CreateCard(card *lib.Card) {
 }
 
 func makeBackground(card *lib.Card) {
-  card.SVG.Roundrect(int(card.LeftBound()), int(card.TopBound()), card.CardSize(), card.CardSize(), card.BorderRadius, card.BorderRadius, "fill:url(#background);stroke:none;")
+  card.SVG.Roundrect(int(card.LeftBound()), int(card.TopBound()), card.CardSize(), card.CardSize(), card.BorderRadius, card.BorderRadius, fmt.Sprintf("fill:%s;stroke:none;", card.BackgroundColor()))
 }
 
 func makeGraph(card *lib.Card) {
@@ -63,49 +62,9 @@ func makeGraph(card *lib.Card) {
 
 func makeDefs(card *lib.Card) {
   s := card.SVG
-  backgroundGradient := []svg.Offcolor {
-    {
-      Color: "rgba(0, 0, 0, 0.8)",
-      Opacity: 100,
-      Offset: 0,
-    },
-    {
-      Color: "rgba(0, 0, 0, 0.9)",
-      Opacity: 100,
-      Offset: 100,
-    },
-  }
-
-  graphGradient := []svg.Offcolor {
-    {
-      Color: "green",
-      Opacity: 100,
-      Offset: 0,
-    },
-    {
-      Color: "greenyellow",
-      Opacity: 100,
-      Offset: 50,
-    },
-    {
-      Color: "yellow",
-      Opacity: 100,
-      Offset: 65,
-    },
-    {
-      Color: "orange",
-      Opacity: 100,
-      Offset: 80,
-    },
-    {
-      Color: "red",
-      Opacity: 100,
-      Offset: 100,
-    },
-  }
+  graphGradient := card.GraphGradient()
 
   s.Def()
-  s.LinearGradient("background", 50, 0, 50, 200, backgroundGradient)
   s.LinearGradient("graph", 50, 0, 50, 200, graphGradient)
   s.DefEnd()
 }
@@ -119,7 +78,7 @@ func makeText(card *lib.Card) {
   fontSize := availableSpace / 10
 
   title := card.PackageData.Name
-  titleColor := "#fff"
+  titleColor := card.TitleColor()
   titleSize := math.Min(availableSpace / (0.5 * float64(len(title))), fontSize)
   s.Text(int(textStart), int(textStart + titleSize / 2), title, fmt.Sprintf("dominant-baseline:middle;color:%s;fill:%s;font-size:%fpx;font-family:sans-serif;", titleColor, titleColor, titleSize))
 
@@ -127,7 +86,7 @@ func makeText(card *lib.Card) {
 
   printer := message.NewPrinter(language.English)
   subtitle := printer.Sprintf("%d downloads last week", recentDownloads)
-  subtitleColor := "#ccc"
+  subtitleColor := card.SubtitleColor()
   subtitleSize := math.Min(availableSpace / (0.5 * float64(len(subtitle))), 2.0 / 3.0 * titleSize)
   s.Text(int(textStart), int(textStart + titleSize / 2 + textPadding + subtitleSize / 2), subtitle, fmt.Sprintf("dominant-baseline:middle;color:%s;fill:%s;font-size:%fpx;font-family:sans-serif;", subtitleColor, subtitleColor, subtitleSize))
 }
