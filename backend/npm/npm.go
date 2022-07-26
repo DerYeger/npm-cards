@@ -32,8 +32,8 @@ func GetPackageData(packageName string, weeks int) (packageData lib.PackageData,
   mu := &sync.Mutex{}
 
   for i := weeks; i >= 0; i-- {
-    startDate := time.Now().AddDate(0, 0, -7 * (i + 1)).Format("2006-01-02")
-    endDate := time.Now().AddDate(0, 0, -7 * i).Format("2006-01-02")
+    startDate := time.Now().AddDate(0, 0, -7 * (i + 1) - 1).Format("2006-01-02")
+    endDate := time.Now().AddDate(0, 0, -7 * i - 1).Format("2006-01-02")
     eg.Go(func() error {
       endpoint := fmt.Sprintf("https://api.npmjs.org/downloads/point/%s:%s/%s", startDate, endDate, packageName)
       resp, err := http.Get(endpoint)
