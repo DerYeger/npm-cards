@@ -87,14 +87,14 @@ func (card *Card) SubtitleColor() string {
   if card.Theme == Light || card.Theme == LightTransparent {
     return "#222"
   }
-  return "#ccc"
+  return "#ddd"
 }
 
 func (card *Card) BackgroundColor() string {
   if card.Theme == Light {
     return "#eee"
   } else if card.Theme == Dark {
-    return "#222"
+    return "#111"
   }
   return "transparent"
 }
