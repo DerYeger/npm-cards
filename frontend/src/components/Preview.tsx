@@ -15,7 +15,7 @@ const Preview: FC<PreviewProps> = ({ cardData, contain }) => {
   const { isLoading, error, data } = useQuery(
     ['card', cardData],
     () => lib.fetchCard(cardData),
-    { retry: false }
+    { retry: false, refetchOnWindowFocus: false }
   )
 
   if (isLoading) {
@@ -39,11 +39,9 @@ const Preview: FC<PreviewProps> = ({ cardData, contain }) => {
       <CopyToClipboardButton cardUrl={lib.getCardUrl(cardData)} />
       <img
         src={data}
+        className="display-block mx-auto"
         style={{
           maxWidth: contain ? '100%' : 'initial',
-          display: 'block',
-          marginLeft: 'auto',
-          marginRight: 'auto',
         }}
       />
     </>

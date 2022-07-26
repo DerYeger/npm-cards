@@ -19,7 +19,8 @@
     "react-copy-to-clipboard": "5.1.0",
     "react-dom": "18.2.0",
     "react-select": "5.4.0",
-    "react-toastify": "9.0.7"
+    "react-toastify": "9.0.7",
+    "use-debounce": "8.0.3"
   },
   "devDependencies": {
     "@types/lodash.debounce": "4.0.7",

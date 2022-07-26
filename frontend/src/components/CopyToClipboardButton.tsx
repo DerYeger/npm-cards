@@ -14,14 +14,7 @@ const CopyToClipboardButton: FC<{ cardUrl: string }> = ({ cardUrl }) => {
   }
   return (
     <CopyToClipboard text={cardUrl} onCopy={notify}>
-      <button
-        style={{
-          display: 'block',
-          fontSize: '0.75rem',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-        }}
-      >
+      <button className="display-block text-md mx-auto">
         Copy to Clipboard
       </button>
     </CopyToClipboard>
