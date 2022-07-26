@@ -30,6 +30,7 @@
     "@yeger/eslint-config": "1.4.33",
     "eslint": "8.20.0",
     "typescript": "4.6.4",
+    "unocss": "0.44.7",
     "vite": "3.0.0",
     "vite-tsconfig-paths": "3.5.0"
   }
