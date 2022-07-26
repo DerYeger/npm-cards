@@ -1,0 +1,45 @@
+:root {
+  --c-skeleton: #333;
+  --g-skeleton: linear-gradient(
+    90deg,
+    rgba(128, 128, 128, 0) 0%,
+    rgba(128, 128, 128, 0.2) 20%,
+    rgba(128, 128, 128, 0.5) 60%,
+    rgba(128, 128, 128, 0)
+  );
+}
+
+.skeleton {
+  background-color: var(--c-skeleton);
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  animation: skeleton-wave 1.5s infinite ease-out;
+  background: var(--g-skeleton);
+  content: '';
+  inset: 0;
+  position: absolute;
+  transform: translateX(-100%);
+}
+
+@keyframes skeleton-wave {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --c-skeleton: #ddd;
+    --g-skeleton: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(255, 255, 255, 0.5) 60%,
+      rgba(255, 255, 255, 0)
+    );
+  }
+}

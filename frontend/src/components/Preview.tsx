@@ -1,85 +1,44 @@
+import { useQuery } from '@tanstack/react-query'
 import type { FC } from 'react'
-import { useEffect, useState } from 'react'
 
 import CopyToClipboardButton from '@/components/CopyToClipboardButton'
-import Spinner from '@/components/Spinner'
+import Skeleton from '@/components/Skeleton/Skeleton'
 import lib from '@/lib'
 import type { CardData } from '@/types'
 
-export interface PreviewProps extends CardData {
+export interface PreviewProps {
+  cardData: CardData
   contain: boolean
 }
 
-const Preview: FC<PreviewProps> = ({
-  packageName,
-  size,
-  padding,
-  borderRadius,
-  weeks,
-  theme,
-  contain,
-}) => {
-  if (
-    !lib.isCardDataComplete({
-      packageName,
-      size,
-      padding,
-      borderRadius,
-      weeks,
-      theme,
-    })
-  ) {
-    return <span>Missing input</span>
-  }
-
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<number | undefined>()
-  const [image, setImage] = useState<string | undefined>()
-
-  const cardUrl = lib.getCardUrl({
-    packageName,
-    size,
-    padding,
-    borderRadius,
-    weeks,
-    theme,
-  })
-
-  useEffect(() => {
-    async function fetchCard() {
-      setIsLoading(true)
-      setError(undefined)
-      try {
-        const res = await fetch(cardUrl)
-        const blob = URL.createObjectURL(await res.blob())
-        if (res.status === 200) {
-          setImage(blob)
-        } else {
-          setError(res.status)
-        }
-      } catch (err) {}
-      setIsLoading(false)
-    }
-    fetchCard()
-  }, [cardUrl])
+const Preview: FC<PreviewProps> = ({ cardData, contain }) => {
+  const { isLoading, error, data } = useQuery(
+    ['card', cardData],
+    () => lib.fetchCard(cardData),
+    { retry: false }
+  )
 
   if (isLoading) {
-    return <Spinner />
+    return (
+      <Skeleton width={`${cardData.size}px`} height={`${cardData.size}px`} />
+    )
   }
 
   if (error === 404) {
     return <span>Not found</span>
   }
 
-  if (error !== undefined) {
-    return <span>Something went wrong</span>
+  if (error) {
+    const message =
+      error instanceof Error ? error.message : 'Something went wrong'
+    return <span>{message}</span>
   }
 
   return (
     <>
-      <CopyToClipboardButton cardUrl={cardUrl} />
+      <CopyToClipboardButton cardUrl={lib.getCardUrl(cardData)} />
       <img
-        src={image}
+        src={data}
         style={{
           maxWidth: contain ? '100%' : 'initial',
           display: 'block',

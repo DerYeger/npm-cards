@@ -206,10 +206,10 @@ function App() {
               type="checkbox"
               checked={contain}
               onChange={() => setContain(!contain)}
-            ></input>
+            />
           </div>
         </div>
-        <Preview {...cardData} contain={contain} />
+        <Preview cardData={cardData} contain={contain} />
       </main>
       <Footer />
       <ToastContainer
